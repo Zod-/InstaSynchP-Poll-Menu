@@ -1,0 +1,20 @@
+#add-poll-options {
+    margin-right: 0px;
+}
+#remove-poll-options {
+    width: 22px;
+}
+#browse-poll-left {
+    width: 22px;
+    margin-left: 2px;
+}
+#browse-poll-right {
+    width: 22px;
+    margin-right: 2px;
+}
+#create-poll {
+    width: 400px;
+}
+.formbox {
+    width: 99%;
+}
