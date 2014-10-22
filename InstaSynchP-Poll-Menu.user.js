@@ -2,7 +2,7 @@
 // @name        InstaSynchP Poll Menu
 // @namespace   InstaSynchP
 // @description Improves the poll menu
-// @version     1
+// @version     1.0.1
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
 // @license     GPL-3.0
@@ -17,6 +17,7 @@
 // @require https://greasyfork.org/scripts/5647-instasynchp-library/code/InstaSynchP%20Library.js
 // ==/UserScript==
 function PollMenu(version) {
+    "use strict";
     this.version = version;
     this.oldPolls = [{
         'title': '',
@@ -39,10 +40,6 @@ PollMenu.prototype = {
     }
 };
 
-function pollMenuRef() {
-    return window.plugins.pollMenu;
-}
-
 PollMenu.prototype.addOption = function () {
     "use strict";
     $('#create-poll').append(
@@ -60,6 +57,7 @@ PollMenu.prototype.removeOption = function () {
 };
 
 PollMenu.prototype.copyOld = function (poll) {
+    "use strict";
     var i = 0;
     $('#clear-poll-options').click();
 
@@ -85,7 +83,7 @@ PollMenu.prototype.copyOld = function (poll) {
 
 PollMenu.prototype.preConnect = function () {
     "use strict";
-    var th = pollMenuRef();
+    var th = this;
     cssLoader.add({
         'name': 'poll-menu',
         'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/eb259a8da965853880a019ae749fcb08b5c3945f/pollMenu.css',
@@ -189,12 +187,12 @@ PollMenu.prototype.preConnect = function () {
 
 PollMenu.prototype.executeOnce = function () {
     "use strict";
-    var th = pollMenuRef();
-    events.on('CreatePoll', function (poll) {
+    var th = this;
+    events.on(th, 'CreatePoll', function (poll) {
         //make a deep copy of the poll
         th.oldPolls.push($.extend(true, {}, poll));
     }, true);
 };
 
 window.plugins = window.plugins || {};
-window.plugins.pollMenu = new PollMenu("1");
+window.plugins.pollMenu = new PollMenu("1.0.1");
