@@ -1,5 +1,6 @@
 #add-poll-options {
     margin-right: 0px;
+    width: 22px;
 }
 #remove-poll-options {
     width: 22px;
@@ -16,5 +17,5 @@
     width: 400px;
 }
 .formbox {
-    width: 99%;
+    width: 87%;
 }
