@@ -2,7 +2,7 @@
 // @name        InstaSynchP Poll Menu
 // @namespace   InstaSynchP
 // @description Improves the poll menu
-// @version     1.0.1
+// @version     1.0.2
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
 // @license     GPL-3.0
@@ -16,9 +16,11 @@
 
 // @require https://greasyfork.org/scripts/5647-instasynchp-library/code/InstaSynchP%20Library.js
 // ==/UserScript==
-function PollMenu(version) {
+
+function PollMenu(version, url) {
     "use strict";
     this.version = version;
+    this.name = 'InstaSynchP Poll Menu';
     this.oldPolls = [{
         'title': '',
         'options': [{
@@ -28,6 +30,7 @@ function PollMenu(version) {
     }];
     this.index = 0;
 }
+
 PollMenu.prototype = {
     get index() {
         return this._index % this.oldPolls.length;
@@ -40,36 +43,20 @@ PollMenu.prototype = {
     }
 };
 
-PollMenu.prototype.addOption = function () {
-    "use strict";
-    $('#create-poll').append(
-        $('<input/>', {
-            'class': 'formbox create-poll-option',
-            'placeholder': 'Option'
-        })
-    ).append($('<br>'));
-};
-
-PollMenu.prototype.removeOption = function () {
-    "use strict";
-    $('#create-poll > :last-child').remove();
-    $('#create-poll > :last-child').remove();
-};
-
 PollMenu.prototype.copyOld = function (poll) {
     "use strict";
     var i = 0;
     $('#clear-poll-options').click();
 
     //add more rows until we got enough to fit the old poll
-    if ($('#create-poll > .create-poll-option').length < poll.options.length) {
-        while (poll.options.length > $('#create-poll > .create-poll-option').length) {
+    if ($('#create-poll > .create-poll-option-div').length < poll.options.length) {
+        while (poll.options.length > $('#create-poll > .create-poll-option-div').length) {
             $('#add-poll-options').click();
         }
     }
 
     //set the title
-    $('#create-poll > #title').val(htmlDecode(poll.title));
+    $('#title').val(htmlDecode(poll.title));
 
     //set the options
     $(".create-poll-option").each(function () {
@@ -86,86 +73,161 @@ PollMenu.prototype.preConnect = function () {
     var th = this;
     cssLoader.add({
         'name': 'poll-menu',
-        'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/eb259a8da965853880a019ae749fcb08b5c3945f/pollMenu.css',
+        'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/8a21e16d6e4238205df1eca353f2a46fb39c26ac/pollMenu.css',
         'autoload': true
     });
 
-    //recreate the poll menu to add +, -, copy old and clear buttons
-    //at the top rather than the bottom so they don't move down when adding
-    //more rows
+    function removeOption(index) {
+        if ($('#create-poll > .create-poll-option-div').length <= 1) {
+            return;
+        }
+        //readd the + button on the last element
+        if ($('#create-poll > .create-poll-option-div').length === 10) {
+            if ($('#create-poll > :last-child').children().length === 2) {
+                $('#create-poll > :last-child').children().eq(0).after(
+                    $('<button>', {
+                        'id': 'add-poll-options'
+                    }).text('+').click(function () {
+                        addOption($(this).parent().index() - 2);
+                    })
+                );
+            }
+        }
+        $('#create-poll .create-poll-option-div').eq(index).remove();
+    }
+
+    function addOption(index) {
+            var sel = '#create-poll > .create-poll-option-div';
+            if ($(sel).length >= 10) {
+                return;
+            }
+            var pollOptionElement = $('<div>', {
+                'class': 'create-poll-option-div'
+            }).append(
+                $('<input/>', {
+                    'class': 'formbox create-poll-option',
+                    'placeholder': 'Option'
+                })
+            ).append(
+                $('<button>', {
+                    'id': 'add-poll-options'
+                }).text('+').click(function () {
+                    addOption($(this).parent().index() - 1);
+                })
+            ).append(
+                $('<button>', {
+                    'id': 'remove-poll-options'
+                }).text('-').click(function () {
+                    removeOption($(this).parent().index() - 2);
+                })
+            );
+            if ($(sel).length === index) {
+                $('#create-poll').append(pollOptionElement);
+            } else {
+                $(sel).eq(index).before(pollOptionElement);
+            }
+            if ($(sel).length === 10) {
+                $(sel).eq(9).children().eq(1).remove();
+            } else {
+                if ($('#create-poll > :last-child').children().length === 2) {
+                    $('#create-poll > :last-child').children().eq(0).after(
+                        $('<button>', {
+                            'id': 'add-poll-options'
+                        }).text('+').click(function () {
+                            addOption($(this).parent().index() - 2);
+                        })
+
+                    );
+                }
+            }
+        }
+        //recreate the poll menu to add +, -, copy old and clear buttons
+        //at the top rather than the bottom so they don't move down when adding
+        //more rows
     $('#create-pollBtn').text('Poll Menu');
     $('#create-poll').empty().append(
-        $('<button>', {
-            'id': 'add-poll-options'
-        }).text('+').click(function () {
-            //add another row if there are less than 10
-            if ($('#create-poll > .create-poll-option').length < 10) {
-                th.addOption();
-            }
-        })
-    ).append(
-        $('<button>', {
-            'id': 'remove-poll-options'
-        }).text('-').click(function () {
-            //remove a row
-            if ($('#create-poll > .create-poll-option').length > 1) {
-                th.removeOption();
-            }
-        })
-    ).append(
-        $('<button>', {
-            'id': 'browse-poll-left'
-        }).text('<').click(function () {
-            if (th.oldPolls.length > 0) {
-                th.index -= 1;
-                th.copyOld(th.oldPolls[th.index]);
-            }
-        })
-    ).append(
-        $('<button>', {
-            'id': 'browse-poll-right'
-        }).text('>').click(function () {
-            if (th.oldPolls.length > 0) {
-                th.index += 1;
-                th.copyOld(th.oldPolls[th.index]);
-            }
-        })
-    ).append(
-        $('<button>', {
-            'id': 'clear-poll-options'
-        }).text('Clear').click(function () {
-            //just clear the options and title
-            $('#create-poll > #title').val('');
-            $(".create-poll-option").val('');
-        })
-    ).append(
-        $('<button>', {
-            'id': 'create-poll-button'
-        }).text('Create').click(function () {
-            //copied from InstaSynch core.js
-            var poll = {};
-            poll.title = $("#title").val();
-            poll.options = [];
-            $(".create-poll-option").each(function () {
-                if ($(this).val().trim() !== "") {
-                    poll.options.push($(this).val().trim());
+        $('<div>', {
+            'class': 'poll-create-controls'
+        }).append(
+            $('<button>', {
+                'id': 'add-poll-options'
+            }).text('+').click(function () {
+                addOption($('#create-poll > .create-poll-option-div').length);
+            })
+        ).append(
+            $('<button>', {
+                'id': 'remove-poll-options'
+            }).text('-').click(function () {
+                removeOption($('#create-poll > .create-poll-option-div').length - 1);
+            })
+        ).append(
+            $('<button>', {
+                'id': 'browse-poll-left'
+            }).text('<').click(function () {
+                if (th.oldPolls.length > 0) {
+                    th.index -= 1;
+                    th.copyOld(th.oldPolls[th.index]);
                 }
-            });
-            window.global.sendcmd("poll-create", poll);
-        })
+            })
+        ).append(
+            $('<button>', {
+                'id': 'copy-poll'
+            }).text('Copy').click(function () {
+                if (th.oldPolls.length > 0) {
+                    th.index = -1;
+                    th.copyOld(th.oldPolls[th.index]);
+                }
+            })
+        ).append(
+            $('<button>', {
+                'id': 'browse-poll-right'
+            }).text('>').click(function () {
+                if (th.oldPolls.length > 0) {
+                    th.index += 1;
+                    th.copyOld(th.oldPolls[th.index]);
+                }
+            })
+        ).append(
+            $('<button>', {
+                'id': 'clear-poll-options'
+            }).text('Clear').click(function () {
+                //just clear the options and title
+                $('#title').val('');
+                $(".create-poll-option").val('');
+            })
+        ).append(
+            $('<button>', {
+                'id': 'create-poll-button'
+            }).text('Create').click(function () {
+                //copied from InstaSynch core.js
+                var poll = {};
+                poll.title = $("#title").val();
+                poll.options = [];
+                $(".create-poll-option").each(function () {
+                    if ($(this).val().trim() !== "") {
+                        poll.options.push($(this).val().trim());
+                    }
+                });
+                window.global.sendcmd("poll-create", poll);
+            })
+        )
     ).append(
-        $('<br>')
-    ).append(
-        $('<input/>', {
-            'class': 'formbox',
-            'id': 'title',
-            'placeholder': 'Poll Title'
-        })
-    ).append(
-        $('<br>')
+        $('<div>').append(
+            $('<input/>', {
+                'class': 'formbox',
+                'id': 'title',
+                'placeholder': 'Poll Title'
+            })
+        ).append(
+            $('<button>', {
+                'id': 'add-poll-options'
+            }).text('+').click(function () {
+                addOption(0);
+            })
+        )
     );
     for (var i = 0; i < 4; i += 1) {
-        th.addOption();
+        addOption(0);
     }
     //read the current poll when the script got loaded after we got connected
     if (window.plugins.core.connected) {
@@ -195,4 +257,4 @@ PollMenu.prototype.executeOnce = function () {
 };
 
 window.plugins = window.plugins || {};
-window.plugins.pollMenu = new PollMenu("1.0.1");
+window.plugins.pollMenu = new PollMenu('1.0.2');

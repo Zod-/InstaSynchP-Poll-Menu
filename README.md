@@ -6,7 +6,7 @@ add buttons to browse old polls and increasing the size of the fields.
 
 Example
 -------
-https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/c45a17b9e307dfaf61b6cf732fcc20998335d1ab/pollMenu.webm
+https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/6f67477647aa671fe27b150997fd895c7013fd0b/pollMenu.webm
 
 License
 -----------
