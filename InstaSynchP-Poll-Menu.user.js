@@ -5,7 +5,7 @@
 // @version     1.0.2
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
-// @license     GPL-3.0
+// @license     MIT
 
 // @include     http://*.instasynch.com/*
 // @include     http://instasynch.com/*
