@@ -2,7 +2,7 @@
 // @name        InstaSynchP Poll Menu
 // @namespace   InstaSynchP
 // @description Improves the poll menu
-// @version     1.0.2
+// @version     1.0.3
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
 // @license     MIT
@@ -73,34 +73,27 @@ PollMenu.prototype.preConnect = function () {
     var th = this;
     cssLoader.add({
         'name': 'poll-menu',
-        'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Poll-Menu/8a21e16d6e4238205df1eca353f2a46fb39c26ac/pollMenu.css',
+        'url': 'https://rawgit.com/Zod-/InstaSynchP-Poll-Menu/5214823bc1a16de90f0134c0794efaa9b24494a7/pollMenu.css',
         'autoload': true
     });
 
+    function enableDisableButtons() {
+        $('.remove-poll-options').attr('disabled',
+            $('#create-poll .create-poll-option-div').length <= 1
+        );
+        $('.add-poll-options').attr('disabled',
+            $('#create-poll > .create-poll-option-div').length >= 10
+        );
+    }
+
     function removeOption(index) {
-        if ($('#create-poll > .create-poll-option-div').length <= 1) {
-            return;
-        }
-        //readd the + button on the last element
-        if ($('#create-poll > .create-poll-option-div').length === 10) {
-            if ($('#create-poll > :last-child').children().length === 2) {
-                $('#create-poll > :last-child').children().eq(0).after(
-                    $('<button>', {
-                        'id': 'add-poll-options'
-                    }).text('+').click(function () {
-                        addOption($(this).parent().index() - 2);
-                    })
-                );
-            }
-        }
-        $('#create-poll .create-poll-option-div').eq(index).remove();
+        var sel = '#create-poll .create-poll-option-div';
+        $(sel).eq(index).remove();
+        enableDisableButtons();
     }
 
     function addOption(index) {
             var sel = '#create-poll > .create-poll-option-div';
-            if ($(sel).length >= 10) {
-                return;
-            }
             var pollOptionElement = $('<div>', {
                 'class': 'create-poll-option-div'
             }).append(
@@ -110,13 +103,13 @@ PollMenu.prototype.preConnect = function () {
                 })
             ).append(
                 $('<button>', {
-                    'id': 'add-poll-options'
+                    'class': 'add-poll-options'
                 }).text('+').click(function () {
                     addOption($(this).parent().index() - 1);
                 })
             ).append(
                 $('<button>', {
-                    'id': 'remove-poll-options'
+                    'class': 'remove-poll-options'
                 }).text('-').click(function () {
                     removeOption($(this).parent().index() - 2);
                 })
@@ -126,20 +119,7 @@ PollMenu.prototype.preConnect = function () {
             } else {
                 $(sel).eq(index).before(pollOptionElement);
             }
-            if ($(sel).length === 10) {
-                $(sel).eq(9).children().eq(1).remove();
-            } else {
-                if ($('#create-poll > :last-child').children().length === 2) {
-                    $('#create-poll > :last-child').children().eq(0).after(
-                        $('<button>', {
-                            'id': 'add-poll-options'
-                        }).text('+').click(function () {
-                            addOption($(this).parent().index() - 2);
-                        })
-
-                    );
-                }
-            }
+            enableDisableButtons();
         }
         //recreate the poll menu to add +, -, copy old and clear buttons
         //at the top rather than the bottom so they don't move down when adding
@@ -150,13 +130,13 @@ PollMenu.prototype.preConnect = function () {
             'class': 'poll-create-controls'
         }).append(
             $('<button>', {
-                'id': 'add-poll-options'
+                'class': 'add-poll-options'
             }).text('+').click(function () {
                 addOption($('#create-poll > .create-poll-option-div').length);
             })
         ).append(
             $('<button>', {
-                'id': 'remove-poll-options'
+                'class': 'remove-poll-options'
             }).text('-').click(function () {
                 removeOption($('#create-poll > .create-poll-option-div').length - 1);
             })
@@ -220,7 +200,7 @@ PollMenu.prototype.preConnect = function () {
             })
         ).append(
             $('<button>', {
-                'id': 'add-poll-options'
+                'class': 'add-poll-options'
             }).text('+').click(function () {
                 addOption(0);
             })
@@ -257,4 +237,4 @@ PollMenu.prototype.executeOnce = function () {
 };
 
 window.plugins = window.plugins || {};
-window.plugins.pollMenu = new PollMenu('1.0.2');
+window.plugins.pollMenu = new PollMenu('1.0.3');
