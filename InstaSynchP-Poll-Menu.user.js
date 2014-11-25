@@ -2,7 +2,7 @@
 // @name        InstaSynchP Poll Menu
 // @namespace   InstaSynchP
 // @description Improves the poll menu
-// @version     1.0.4
+// @version     1.0.5
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
 // @license     MIT
@@ -104,13 +104,15 @@ PollMenu.prototype.preConnect = function () {
                 })
             ).append(
                 $('<button>', {
-                    'class': 'add-poll-options'
+                    'class': 'add-poll-options',
+                    'tabIndex': -1
                 }).text('+').click(function () {
                     addOption($(this).parent().index() - 1);
                 })
             ).append(
                 $('<button>', {
-                    'class': 'remove-poll-options'
+                    'class': 'remove-poll-options',
+                    'tabIndex': -1
                 }).text('-').click(function () {
                     removeOption($(this).parent().index() - 2);
                 })
@@ -201,7 +203,8 @@ PollMenu.prototype.preConnect = function () {
             })
         ).append(
             $('<button>', {
-                'class': 'add-poll-options'
+                'class': 'add-poll-options',
+                'tabIndex': -1
             }).text('+').click(function () {
                 addOption(0);
             })
@@ -238,4 +241,4 @@ PollMenu.prototype.executeOnce = function () {
 };
 
 window.plugins = window.plugins || {};
-window.plugins.pollMenu = new PollMenu('1.0.4');
+window.plugins.pollMenu = new PollMenu('1.0.5');
