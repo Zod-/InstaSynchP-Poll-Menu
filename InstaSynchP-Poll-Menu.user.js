@@ -2,15 +2,13 @@
 // @name        InstaSynchP Poll Menu
 // @namespace   InstaSynchP
 // @description Improves the poll menu
-// @version     1.0.5
+// @version     1.0.6
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Poll-Menu
 // @license     MIT
 
-// @include     http://*.instasynch.com/*
-// @include     http://instasynch.com/*
-// @include     http://*.instasync.com/*
-// @include     http://instasync.com/*
+// @include     *://instasync.com/r/*
+// @include     *://*.instasync.com/r/*
 // @grant       none
 // @run-at      document-start
 
@@ -240,4 +238,4 @@ PollMenu.prototype.executeOnce = function () {
 };
 
 window.plugins = window.plugins || {};
-window.plugins.pollMenu = new PollMenu('1.0.5');
+window.plugins.pollMenu = new PollMenu('1.0.6');
